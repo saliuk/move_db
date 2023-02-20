@@ -45,7 +45,7 @@ pipeline {
         steps {
             script {
                 cleanWs ()
-                git credentialsId: 'github', url: 'git@github.com:saliuk/12.git', branch: 'master'
+                git credentialsId: 'github', url: 'git@github.com:saliuk/move_db.git', branch: 'master'
                 withCredentials([usernamePassword(credentialsId: 'db-pass', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
                             sh './script.sh $DB_TYPE $SRC_DB_HOST $SRC_DB_PORT $SRC_DB_NAME $DST_DB_HOST $DST_DB_PORT $DST_DB_NAME'
                 }
