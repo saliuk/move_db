@@ -7,13 +7,13 @@ properties([
 //<----------------------------------------------------------------------------------------------------------------------------------------------------------->            
              string(name: 'SRC_DB_PORT',     defaultValue: '3306',             description: 'Please specify source port'),
 //<----------------------------------------------------------------------------------------------------------------------------------------------------------->
-             string(name: 'SRC_DB_NAME',     defaultValue: 'database_1',       description: 'Please specify source database name'),
+             string(name: 'SRC_DB_NAME',     defaultValue: 'db_1',       description: 'Please specify source database name'),
 //<----------------------------------------------------------------------------------------------------------------------------------------------------------->
              string(name: 'DST_DB_HOST',     defaultValue: '192.168.1.119',    description: 'Please specify destination host'),
 //<----------------------------------------------------------------------------------------------------------------------------------------------------------->
              string(name: 'DST_DB_PORT',     defaultValue: '3306',             description: 'Please specify destination port'),
 //<----------------------------------------------------------------------------------------------------------------------------------------------------------->
-             string(name: 'DST_DB_NAME',     defaultValue: 'database_1',       description: 'Please specify destination database name'),
+             string(name: 'DST_DB_NAME',     defaultValue: 'db_5',       description: 'Please specify destination database name'),
 //<----------------------------------------------------------------------------------------------------------------------------------------------------------->
              booleanParam(name: 'DEBUG',     defaultValue: false,              description: 'extended console logs')
         ]
