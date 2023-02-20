@@ -1,0 +1,95 @@
+properties([
+    parameters(
+        [
+             choice(name: 'DB_TYPE',         choices: ['MYSQL', 'POSTGRESQL'], description: 'Select database type: MYSQL or POSTGRESQL'),
+//<----------------------------------------------------------------------------------------------------------------------------------------------------------->
+             string(name: 'SRC_DB_HOST',     defaultValue: '192.168.1.118',    description: 'Please specify source host'),
+//<----------------------------------------------------------------------------------------------------------------------------------------------------------->            
+             string(name: 'SRC_DB_PORT',     defaultValue: '3306',             description: 'Please specify source port'),
+//<----------------------------------------------------------------------------------------------------------------------------------------------------------->
+             string(name: 'SRC_DB_NAME',     defaultValue: 'database_1',       description: 'Please specify source database name'),
+//<----------------------------------------------------------------------------------------------------------------------------------------------------------->
+             string(name: 'DST_DB_HOST',     defaultValue: '192.168.1.119',    description: 'Please specify destination host'),
+//<----------------------------------------------------------------------------------------------------------------------------------------------------------->
+             string(name: 'DST_DB_PORT',     defaultValue: '3306',             description: 'Please specify destination port'),
+//<----------------------------------------------------------------------------------------------------------------------------------------------------------->
+             string(name: 'DST_DB_NAME',     defaultValue: 'database_1',       description: 'Please specify destination database name'),
+//<----------------------------------------------------------------------------------------------------------------------------------------------------------->
+             booleanParam(name: 'DEBUG',     defaultValue: false,              description: 'extended console logs')
+        ]
+    )
+])
+
+pipeline {
+    agent any
+
+    environment {
+        MAIL_TO = "iwan.salyuk@gmail.com"
+        DESCRIPTION = "Parameters:\n" +
+        "--------------------------------------------\n\n" +
+        "Description:\n" +
+        "--------------------------------------------\n" +
+        "- Copying from one database to another \n" +
+        "--------------------------------------------\n\n" +
+        "URL: ${env.BUILD_URL}"
+
+    }
+
+    options {
+        timestamps()
+        buildDiscarder(logRotator(numToKeepStr:'25'))
+    }
+
+   stages {
+    stage("Copying database") {
+        steps {
+            script {
+                cleanWs ()
+                git credentialsId: 'github', url: 'git@github.com:saliuk/12.git', branch: 'master'
+                withCredentials([usernamePassword(credentialsId: 'db-pass', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
+                            sh './script.sh $DB_TYPE $SRC_DB_HOST $SRC_DB_PORT $SRC_DB_NAME $DST_DB_HOST $DST_DB_PORT $DST_DB_NAME'
+                }
+                        
+            }
+        }
+    }
+}
+
+    post {
+        always {
+            cleanWs()
+        }
+
+//        success {
+//            script {
+//                if (currentBuild.number > 1 && currentBuild.getPreviousBuild().result == "FAILURE") {
+//                    emailext attachLog: true,
+//                        to: MAIL_TO,
+//                        subject: currentBuild.fullDisplayName + " back to normal",
+//                        body: currentBuild.fullDisplayName + " Jenkins job finished successfully.\n\n" +
+//                              DESCRIPTION
+//
+//                }
+//            }
+//        }
+//
+//       failure {
+//           emailext attachLog: true,
+//               to: MAIL_TO,
+//                subject: currentBuild.fullDisplayName + " failure ",
+//                body: currentBuild.fullDisplayName + "Jenkins job failed.\n" +
+//                    "Please check logs on Jenkins for more details.\n\n" +
+//                      DESCRIPTION
+//        }
+
+//        aborted {
+//            script {
+//                emailext attachLog: true,
+//                        to: MAIL_TO,
+//                        subject: currentBuild.fullDisplayName + " aborted (manually)",
+//                        body: currentBuild.fullDisplayName + " Jenkins job has been aborted manually.\n\n" +
+//                              DESCRIPTION
+//            }
+//        }
+    }
+}
